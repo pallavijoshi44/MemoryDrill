@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragmentHelp"
+    android:orientation="vertical"
+    android:background="#7030a0"
+    >
+
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/help_tv_mastermind_marginTop"
+            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/appTitle"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/help_tv_mastermind_size"
+                android:layout_gravity="left"
+                android:id="@+id/tvMasterMindFragment"/>
+
+            <ImageView
+                android:layout_marginLeft="@dimen/brain_image_margin"
+                android:layout_width="@dimen/mastermind_text_size"
+                android:layout_height="@dimen/mastermind_text_size"
+                android:id="@+id/ivBrain"
+                android:src="@drawable/brain"
+               />
+        </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="9"
+        android:layout_marginTop="@dimen/help_rl_main_margin_top"
+        android:layout_marginLeft="@dimen/help_rl_main_margin_left"
+        android:layout_marginRight="@dimen/help_rl_main_margin_right"
+        android:layout_marginBottom="@dimen/help_rl_main_margin_bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#d38e72"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/help_ll_main_margin_top"
+            android:layout_marginLeft="@dimen/help_ll_main_margin_left"
+            android:layout_marginRight="@dimen/help_ll_main_margin_right"
+            android:layout_marginBottom="@dimen/help_ll_main_margin_bottom"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/help_tv_help_title_margin"
+                >
+        <TextView
+            android:layout_weight="5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="How To Play"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"
+            android:id="@+id/tvHelpTitle"
+            />
+            <Button
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:layout_width="@dimen/help_tv_help_close_button_width"
+                android:layout_height="@dimen/help_tv_help_close_button_height"
+                android:layout_marginRight="@dimen/help_tv_help_close_button_marginRight"
+                android:background="@drawable/close_button_selector"
+                android:id="@+id/btnClose"/>
+            </LinearLayout>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/help_scrollview_main_margin_left"
+                android:layout_marginRight="@dimen/help_scrollview_main_margin_right"
+                android:layout_marginBottom="@dimen/help_scrollview_main_margin_bottom"
+                android:layout_marginTop="@dimen/help_scrollview_main_margin_top">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvHelpText"
+                android:textSize="@dimen/help_help_content_size"
+                android:text="You need to memorize all the images that will be displayed on the first screen.\n\nOnce memorized, you can tap the ‘Done Memorizing’ button.\n\nOn the second screen, one of the images from the previous screen will be replaced with a new image and the other images will be shuffled.\n\nYou need to identify the new image. You need to ensure that the memorization and identification is done before the timer runs out.\n\nAs you progress through the stages, the levels will become more challenging!\n\nAll the best!"/>
+
+            </ScrollView>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_marginLeft="@dimen/help_help_iv_frame_margin_left"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/frame_side"
+            android:id="@+id/ivframeSide"/>
+
+        <ImageView
+            android:id="@+id/ivframeEnd"
+            android:layout_marginRight="@dimen/help_help_iv_frame_margin_right"
+            android:layout_alignParentRight="true"
+            android:layout_width="@dimen/help_help_iv_frame_size"
+            android:layout_height="match_parent"
+            android:src="@drawable/frame_side"/>
+        <ImageView
+            android:id="@+id/ivframeTop"
+            android:layout_alignParentLeft="true"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/help_help_iv_frame_size"
+            android:src="@drawable/frame_top"
+            />
+        <ImageView
+            android:id="@+id/ivframeBottom"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/help_help_iv_frame_size"
+            android:src="@drawable/frame_top"/>
+
+
+    </RelativeLayout>
+
+</LinearLayout>

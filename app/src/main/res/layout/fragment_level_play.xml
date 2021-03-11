@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gradient_main"
+    android:id="@+id/fragmentEasy"
+    >
+    <RelativeLayout
+            android:id="@+id/rl_memory_drill"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/mastermind_margin_top"
+            android:layout_marginLeft="@dimen/mastermind_margin_left"
+            android:layout_marginRight="@dimen/mastermind_margin_left"
+            android:layout_height="wrap_content"
+           >
+
+            <TextView
+                android:layout_marginLeft="@dimen/mastermind_margin_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/appTitle"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/mastermind_text_size_level_play"
+                android:layout_gravity="left"
+                android:id="@+id/tvMasterMindFragment"/>
+
+            <ImageView
+                android:layout_toRightOf="@+id/tvMasterMindFragment"
+                android:layout_marginLeft="@dimen/brain_image_margin"
+                android:layout_width="@dimen/mastermind_text_size"
+                android:layout_height="@dimen/mastermind_text_size"
+                android:id="@+id/ivBrain"
+                android:src="@drawable/brain"
+                />
+
+            <TextView
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/ivBrain"
+                android:layout_marginLeft="@dimen/mastermind_margin_left"
+                android:layout_marginRight="@dimen/mastermind_margin_right"
+                android:id="@+id/textViewTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="this is test"
+                android:textSize="@dimen/mastermind_text_size_timer"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+               />
+        <TextView
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/textViewTime"
+            android:layout_marginLeft="@dimen/mastermind_margin_left_timer"
+            android:layout_marginRight="@dimen/mastermind_margin_right_timer"
+            android:id="@+id/tvLevelNo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textSize="@dimen/mastermind_timer_textsize"
+            android:text="Level No"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            />
+
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_below="@+id/rl_memory_drill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fl_gridview"
+        android:layout_marginTop="@dimen/mastermind_gridview_fl_margin_top"
+        android:layout_marginLeft="@dimen/mastermind_gridview_fl_margin_left"
+        android:layout_marginRight="@dimen/mastermind_gridview_fl_margin_right">
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="70dp"
+        android:gravity="center"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="@dimen/mastermind_gridview_vertical_spacing"
+        android:horizontalSpacing="@dimen/mastermind_gridview_horizontal_spacing"
+        android:focusable="true"
+        android:clickable="true"
+        />
+    </FrameLayout>
+
+    <com.memorygame.memorydrill.AutoResizeTextView
+        android:layout_height="@dimen/level_play_info_tv_height"
+        android:ellipsize="none"
+        android:maxLines="2"
+        android:layout_below="@+id/fl_gridview"
+        android:layout_marginTop="@dimen/level_play_info_tv_margin_top"
+        android:layout_marginLeft="@dimen/level_play_info_tv_margin_left"
+        android:layout_marginRight="@dimen/level_play_info_tv_margin_right"
+        android:id="@+id/tvMemorizeInfo"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:textSize="@dimen/level_play_info_tv_size"
+        android:text="Memorize these images as fast as you can..."
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        />
+
+    <Button
+        android:layout_margin="@dimen/level_play_info_btn_memorizing_margin"
+        android:layout_width="@dimen/level_play_info_btn_memorizing_width"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:layout_height="@dimen/level_play_info_btn_memorizing_height"
+        android:id="@+id/btncontinue"
+        android:background="@drawable/memorize_button_selector"
+        android:text="Done Memorizing"
+        android:textSize="@dimen/level_play_info_btn_memorizing_textsize"
+        android:layout_gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+       />
+
+
+</RelativeLayout>

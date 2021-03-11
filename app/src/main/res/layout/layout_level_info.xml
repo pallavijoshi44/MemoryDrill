@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gradient_main"
+    android:id="@+id/rlLevelInfo"
+    >
+            <TextView
+                android:layout_marginTop="@dimen/level_info_margin_top"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/appTitle"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/mastermind_text_size"
+                android:id="@+id/tvMasterMindFragment"/>
+
+            <ImageView
+                android:layout_marginTop="@dimen/level_info_margin_top"
+                android:layout_marginLeft="@dimen/brain_image_margin"
+                android:layout_toRightOf="@+id/tvMasterMindFragment"
+                android:layout_width="@dimen/mastermind_text_size"
+                android:layout_height="@dimen/mastermind_text_size"
+                android:id="@+id/ivBrain"
+                android:src="@drawable/brain"
+                />
+
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tvMasterMindFragment"
+        android:id="@+id/textOops"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/textoops_textsize"
+        android:textStyle="bold"
+
+        />
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textOops"
+        android:id="@+id/textAlert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:text="Here is your challenge"
+        android:layout_marginTop="@dimen/text_alert_text_margin_top"
+        android:textSize="@dimen/text_alert_textsize"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textAlert"
+        android:id="@+id/imageAlert"
+        android:layout_width="@dimen/level_info_tv_info_text_image_width"
+        android:layout_height="@dimen/level_info_tv_info_text_image_height"
+        android:layout_margin="@dimen/level_info_tv_info_text_image_margin"
+        android:text="\n4 images \n30 seconds"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:textSize="@dimen/level_info_tv_info_text_size"
+        android:gravity="center"
+        android:background="@drawable/level_info_board"
+        />
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/imageAlert"
+        android:layout_marginTop="@dimen/level_info_tv_image_alert_text_margin_top"
+        android:id="@+id/textLevelCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:text="Are you up for it?"
+        android:textSize="@dimen/level_info_tv_image_alert_text_size"
+        android:textStyle="bold"
+        />
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/level_info_tv_tap_margin_top"
+        android:layout_below="@+id/textLevelCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:id="@+id/ll_tap">
+
+            <TextView
+                android:id="@+id/tvTap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text=" Tap anywhere to start "
+                android:textSize="@dimen/level_info_tv_tap_size"
+                android:textStyle="bold"
+                android:textColor="#984806" />
+
+    </LinearLayout>
+</RelativeLayout>

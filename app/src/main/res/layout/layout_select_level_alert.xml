@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/alert_rounded_corner">
+
+    <TextView
+        android:id="@+id/textOops"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#5f497a"
+        android:text="This action will exit Memory Drill.\nAre you sure?"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="center_horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:id="@+id/ll_resume"
+            android:orientation="horizontal"
+            android:background="@drawable/popup_selector"
+            >
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/no_exit_icon"
+                />
+            <TextView
+                android:id="@+id/tvExit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text=" No, I will continue "
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="#984806" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="right"
+            android:id="@+id/ll_exit"
+            android:background="@drawable/popup_selector"
+            >
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/exit_icon"
+                />
+            <TextView
+                android:id="@+id/tvResume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text=" Yes, I will come back later"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="#984806" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
