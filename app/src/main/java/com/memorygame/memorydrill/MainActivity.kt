@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.Window
@@ -14,12 +15,24 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.memorygame.memorydrill.HelpFragment.HelpFragmentListener
 import com.memorygame.memorydrill.LevelInfoFragment.LevelInfoFragmentListener
 import com.memorygame.memorydrill.LevelsFragment.LevelsFragmentListener
 import com.memorygame.memorydrill.SelectLevelFragment.SelectLevelFragmentListener
+import kotlin.time.Duration
 
 /**
  * Created by aspire on 04-07-2016.
@@ -64,6 +77,8 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
 
         setContentView(R.layout.activity_main)
 
+        checkForUpdates()
+
         flagBadgeEarned = false
         flagShowAnimOnBack = false
         val preferences = getPreferences(MODE_PRIVATE)
@@ -93,6 +108,102 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
             transaction.commit()
             fragmentShown = SELECT_LEVELS_FRAGMENT_SHOWN
         }
+    }
+
+
+    private fun checkForUpdates() {
+        try {
+            val appUpdateManager =
+                AppUpdateManagerFactory.create(requireNotNull(applicationContext))
+            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+            val activityResultLauncher =
+                registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                    if (result.resultCode == RESULT_OK) {
+                        Toast.makeText(applicationContext, "Starting to update", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                val hasUpdate =
+                    appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE || appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+                val failed = appUpdateInfo.getFailedUpdatePreconditions(appUpdateOptions)
+
+                Log.d("Pallavi hasUpdate= ", "$hasUpdate")
+                Log.d("Pallavi failed", "${failed.map { it.toString() }}")
+                Log.d("Pallavi bytes downloaded", "${appUpdateInfo.bytesDownloaded()}")
+                Log.d("Pallavi total bytes to download", "${appUpdateInfo.totalBytesToDownload()}")
+                Log.d("Pallavi availableVersionCode", "${appUpdateInfo.availableVersionCode()}")
+
+                if (hasUpdate) {
+                    triggerFlexibleUpdate(
+                        appUpdateManager,
+                        appUpdateInfo,
+                        activityResultLauncher,
+                        appUpdateOptions
+                    )
+                }
+                Log.d(
+                    "Pallavi isUpdateAllowedForFlexible",
+                    "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)}"
+                )
+                Log.d(
+                    "Pallavi isUpdateAllowedForImmediate",
+                    "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)}"
+                )
+                Log.d("Pallavi appUpdateInfo availability", "${appUpdateInfo.updateAvailability()}")
+                Log.d("Pallavi hasUpdate", "$hasUpdate")
+                Log.d("Pallavi staleness", "${appUpdateInfo.clientVersionStalenessDays()}")
+
+            }
+                .addOnFailureListener {
+                    Log.d("Pallavi", "failed to update...")
+
+                }
+        } catch (e: Exception) {
+            Log.d("Pallavi", "checking for update failed with $e")
+
+        }
+    }
+
+    private fun triggerFlexibleUpdate(
+        appUpdateManager: AppUpdateManager,
+        appUpdateInfo: AppUpdateInfo,
+        activityResultLauncher: ActivityResultLauncher<IntentSenderRequest>,
+        appUpdateOptions: AppUpdateOptions
+    ) {
+        Log.d("Pallavi", "Update availble")
+        appUpdateManager.startUpdateFlowForResult(
+            appUpdateInfo,
+            activityResultLauncher,
+            appUpdateOptions
+        )
+        appUpdateManager.registerListener { state ->
+            val installStatus = state.installStatus()
+            Log.d("Pallavi installstatus", "$installStatus")
+            Log.d("Pallavi installErrorCode", "${state.installErrorCode()}")
+
+            if (installStatus == InstallStatus.DOWNLOADED)
+                Toast.makeText(
+                    applicationContext,
+                    "Downloaded with $installStatus",
+                    Toast.LENGTH_LONG
+                ).show()
+            if (installStatus == InstallStatus.FAILED)
+                Toast.makeText(
+                    applicationContext,
+                    "Failed with $installStatus",
+                    Toast.LENGTH_LONG
+                ).show()
+            if (installStatus == InstallStatus.PENDING)
+                Toast.makeText(
+                    applicationContext,
+                    "Pending with $installStatus",
+                    Toast.LENGTH_LONG
+                ).show()
+
+        }
+
     }
 
     override fun onBtnSelected(level: Int) {
