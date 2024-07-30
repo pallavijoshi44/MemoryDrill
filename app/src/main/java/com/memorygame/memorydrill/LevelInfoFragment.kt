@@ -1,117 +1,114 @@
-package com.memorygame.memorydrill;
+package com.memorygame.memorydrill
 
-import android.content.Context;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
+import android.content.Context
+import android.graphics.Typeface
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 
 /**
  * Created by aspire on 04-07-2016.
  */
-public class LevelInfoFragment extends Fragment implements View.OnClickListener {
+class LevelInfoFragment : Fragment(), View.OnClickListener {
+    private val btnClose: Button? = null
+    private var tvMasterMindFragment: TextView? = null
+    private var tvTextAlert: TextView? = null
+    private var textLevelCheck: TextView? = null
+    private var tvTap: TextView? = null
+    private var textOops: TextView? = null
+    private var imageAlert: TextView? = null
+    var args: Bundle? = null
+    var level: Int = 0
+    var stage: Int = 0
+    var timeAllowed: String? = null
+    var numImages: Int = 0
+    private var llLevelInfo: RelativeLayout? = null
+    var levelInfoFragmentListener: LevelInfoFragmentListener? = null
 
-    private Button btnClose;
-    private TextView tvMasterMindFragment;
-    private TextView tvTextAlert;
-    private TextView textLevelCheck;
-    private TextView tvTap;
-    private TextView textOops;
-    private TextView imageAlert;
-    Bundle args;
-    int level;
-    int stage;
-    String timeAllowed;
-    int numImages;
-    private RelativeLayout llLevelInfo;
-    LevelInfoFragmentListener levelInfoFragmentListener;
 
-
-    public LevelInfoFragment() {
+    interface LevelInfoFragmentListener {
+        fun startLevel(level: Int)
     }
 
-    public interface LevelInfoFragmentListener{
-        void startLevel(int level);
-    }
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val rootView = inflater.inflate(R.layout.layout_level_info, container, false)
 
-        View rootView = inflater.inflate(com.memorygame.memorydrill.R.layout.layout_level_info, container, false);
-
-        return  rootView;
+        return rootView
     }
-        @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
 
-            levelInfoFragmentListener = (LevelInfoFragmentListener) getActivity();
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            args = getArguments();
+        levelInfoFragmentListener = activity as LevelInfoFragmentListener?
 
-            if(args != null){
-                level = args.getInt("Level");
-                stage = args.getInt("Stage");
-                timeAllowed = args.getString("TimeAllowed");
-                numImages = args.getInt("NumImages");
+        args = arguments
 
-            }
-            tvMasterMindFragment = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvMasterMindFragment);
-            textLevelCheck = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.textLevelCheck);
-            tvTextAlert = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.textAlert);
-            tvTap = (TextView)getActivity().findViewById(com.memorygame.memorydrill.R.id.tvTap);
-            llLevelInfo = (RelativeLayout)getActivity().findViewById(com.memorygame.memorydrill.R.id.rlLevelInfo);
-            textOops = (TextView)getActivity().findViewById(com.memorygame.memorydrill.R.id.textOops);
-            textOops.setText("Level " + level);
-            imageAlert = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.imageAlert);
-            // tvNext = (TextView) dialog.findViewById(R.id.tvNext);
-            // tvHome = (TextView) dialog.findViewById(R.id.tvHome);
-
-             Typeface face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/forte.ttf");
-             textOops.setTypeface(face);
-
-             face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/chiller.ttf");
-            tvTextAlert.setTypeface(face);
-
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/chiller.ttf");
-            textLevelCheck.setTypeface(face);
-
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/forte.ttf");
-            imageAlert.setTypeface(face);
-
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/papyrus.ttf");
-            tvMasterMindFragment.setTypeface(face);
-
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/mvboli.ttf");
-            tvTap.setTypeface(face);
-
-            tvTap.setVisibility(View.INVISIBLE);
-            tvTap.postDelayed(new Runnable() {
-                public void run() {
-                    tvTap.setVisibility(View.VISIBLE);
-                    llLevelInfo.setOnClickListener(LevelInfoFragment.this);
-                }
-            }, 1500);
-
-            String numOfImages = numImages + " images";
-            String stageText =  "Stage " + stage;
-
-            String text = "\n".concat(numOfImages).concat("\n").concat(timeAllowed);
-
-            imageAlert.setText(text);
+        if (args != null) {
+            level = args!!.getInt("Level")
+            stage = args!!.getInt("Stage")
+            timeAllowed = args!!.getString("TimeAllowed")
+            numImages = args!!.getInt("NumImages")
         }
+        tvMasterMindFragment = activity!!.findViewById<View>(R.id.tvMasterMindFragment) as TextView
+        textLevelCheck = activity!!.findViewById<View>(R.id.textLevelCheck) as TextView
+        tvTextAlert = activity!!.findViewById<View>(R.id.textAlert) as TextView
+        tvTap = activity!!.findViewById<View>(R.id.tvTap) as TextView
+        llLevelInfo = activity!!.findViewById<View>(R.id.rlLevelInfo) as RelativeLayout
+        textOops = activity!!.findViewById<View>(R.id.textOops) as TextView
+        textOops!!.text = "Level $level"
+        imageAlert = activity!!.findViewById<View>(R.id.imageAlert) as TextView
+
+        // tvNext = (TextView) dialog.findViewById(R.id.tvNext);
+        // tvHome = (TextView) dialog.findViewById(R.id.tvHome);
+        var face = Typeface.createFromAsset(
+            activity!!.assets, "fonts/forte.ttf"
+        )
+        textOops!!.typeface = face
+
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/chiller.ttf")
+        tvTextAlert!!.typeface = face
+
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/chiller.ttf")
+        textLevelCheck!!.typeface = face
+
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/forte.ttf")
+        imageAlert!!.typeface = face
+
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/papyrus.ttf")
+        tvMasterMindFragment!!.typeface = face
+
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/mvboli.ttf")
+        tvTap!!.typeface = face
+
+        tvTap!!.visibility = View.INVISIBLE
+        tvTap!!.postDelayed({
+            tvTap!!.visibility = View.VISIBLE
+            llLevelInfo!!.setOnClickListener(this@LevelInfoFragment)
+        }, 1500)
+
+        val numOfImages = "$numImages images"
+        val stageText = "Stage $stage"
+
+        val text = """
+            
+            $numOfImages
+            $timeAllowed
+            """.trimIndent()
+
+        imageAlert!!.text = text
+    }
 
 
     /*
@@ -185,23 +182,18 @@ public class LevelInfoFragment extends Fragment implements View.OnClickListener 
         }
 
     }*/
-    @Override
-    public void onStart(){
-        super.onStart();
-
-
+    override fun onStart() {
+        super.onStart()
     }
 
 
-    @Override
-    public void onClick(View v) {
-
-        levelInfoFragmentListener.startLevel(level);
+    override fun onClick(v: View) {
+        levelInfoFragmentListener!!.startLevel(level)
     }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        levelInfoFragmentListener = null;
+
+    override fun onDestroy() {
+        super.onDestroy()
+        levelInfoFragmentListener = null
     }
 }
 

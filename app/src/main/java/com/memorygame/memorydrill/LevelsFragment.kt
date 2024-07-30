@@ -1,515 +1,460 @@
-package com.memorygame.memorydrill;
+package com.memorygame.memorydrill
 
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
+import android.content.res.TypedArray
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Typeface
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.Button
+import android.widget.GridView
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import java.util.Collections
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by aspire on 24-06-2016.
  */
-public class LevelsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
+class LevelsFragment : Fragment(), View.OnClickListener, OnItemClickListener {
+    private var tvMasterMind: TextView? = null
+    private var currentState: Boolean? = null
+    private var gridView: GridView? = null
+    private var gridAdapter: GridViewAdapter? = null
+    private var btnContinue: Button? = null
+    var numbers: MutableList<Int> = mutableListOf()
+    var imgs: TypedArray? = null
+    var textViewTime: TextView? = null
+    var tvMemorizeInfo: AutoResizeTextView? = null
+    var tvLevelNo: TextView? = null
+    var timeRemaining: Long = -1
+    var millis: Long = 0
+    var timer: CounterClass? = null
+    var calcTime: Long = 0
+    var args: Bundle? = null
+    var level: Int = 0
+    var numImgs: Int = 0
+    var numNewImgs: Int = 0
+    var numColumns: Int = 0
+    var newPos: Int = 0
+    var textviewText: String? = null
+    var imageNew: GridImageView? = null
+    var columnWidth: Int = 0
+    var mListener: LevelsFragmentListener? = null
+    var saveFlag: Boolean? = null
+    var flagChangeGridImages: Boolean? = null
+    var gridItems: ArrayList<GridImageView>? = null
+    var tempGridItems: ArrayList<GridImageView>? = null
 
-    private TextView tvMasterMind;
-    Boolean state;
-    private GridView gridView;
-    private GridViewAdapter gridAdapter;
-    private Button btnContinue;
-    ArrayList numbers;
-    TypedArray imgs;
-    TextView textViewTime;
-    AutoResizeTextView tvMemorizeInfo;
-    TextView tvLevelNo;
-    long timeRemaining = -1;
-    long millis;
-    CounterClass timer;
-    long calcTime;
-    Bundle args;
-    int level;
-    int numImgs;
-    int numNewImgs;
-    int numColumns;
-    int newPos;
-    String textviewText;
-    GridImageView imageNew;
-    int columnWidth;
-    LevelsFragmentListener mListener;
-    Boolean saveFlag;
-    Boolean flagChangeGridImages;
-    ArrayList<GridImageView> gridItems;
-    ArrayList<GridImageView> tempGridItems;
-
-    public final static String LEVEL = "LEVEL";
-    public final static int WIDTH_ONE = 35;
-
-    public final static String TIMER_TEXT_STAGE_ONE = "01:00";
-    public final static String TIMER_TEXT_STAGE_TWO = "00:45";
-    public final static String TIMER_TEXT_STAGE_THREE = "00:30";
-    public final static String TIMER_TEXT_STAGE_FOUR = "00:15";
-
-    public final static long TIMER_ONE = 60000;
-    public final static long TIMER_TWO = 45000;
-    public final static long TIMER_THREE = 30000;
-    public final static long TIMER_FOUR = 15000;
-    GridViewAdapter tempGridAdapter;
+    var tempGridAdapter: GridViewAdapter? = null
 
 
-    public interface LevelsFragmentListener{
+    interface LevelsFragmentListener {
+        fun onImageSelected(
+            newPos: Int,
+            position: Int,
+            timeRemaining: Long,
+            itemPickedId: Int,
+            newItemId: Int,
+            level: Int
+        )
 
-        void onImageSelected(int newPos, int position, long timeRemaining, int itemPickedId, int newItemId, int level);
-        void timerFinished(int level);
+        fun timerFinished(level: Int)
     }
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        state = false;
-        imgs = null;
-        setRetainInstance(true); //Will ignore onDestroy Method (Nested Fragments no need this if parent have it)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        currentState = false
+        imgs = null
+        retainInstance =
+            true //Will ignore onDestroy Method (Nested Fragments no need this if parent have it)
     }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
 
-        int layout = com.memorygame.memorydrill.R.layout.fragment_level_play;
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val layout = R.layout.fragment_level_play
 
 
         // Inflate the layout for this fragment
-        return inflater.inflate(layout, container, false);
-
-    }
-    private void setTimer(){
-
-            if (level == 1) {
-
-                calcTime = TIMER_ONE;
-                textviewText = TIMER_TEXT_STAGE_ONE;
-
-            } else if (level == 2) {
-
-                calcTime = TIMER_TWO;
-                textviewText = TIMER_TEXT_STAGE_TWO;
-
-
-            } else if (level == 3) {
-
-                calcTime = TIMER_THREE;
-                textviewText = TIMER_TEXT_STAGE_THREE;
-
-            } else if (level == 4) {
-
-
-                calcTime = TIMER_FOUR;
-                textviewText = TIMER_TEXT_STAGE_FOUR;
-            } else if (level == 5) {
-
-
-                calcTime = TIMER_ONE;
-                textviewText = TIMER_TEXT_STAGE_ONE;
-
-            } else if (level == 6) {
-
-
-                calcTime = TIMER_TWO;
-                textviewText = TIMER_TEXT_STAGE_TWO;
-
-
-            } else if (level == 7) {
-
-
-                calcTime = TIMER_THREE;
-                textviewText = TIMER_TEXT_STAGE_THREE;
-
-            } else if (level == 8) {
-
-
-                calcTime = TIMER_FOUR;
-                textviewText = TIMER_TEXT_STAGE_FOUR;
-
-            } else if (level == 9) {
-
-
-                calcTime = TIMER_ONE;
-                textviewText = TIMER_TEXT_STAGE_ONE;
-
-            } else if (level == 10) {
-
-
-                calcTime = TIMER_TWO;
-                textviewText = TIMER_TEXT_STAGE_TWO;
-
-            } else if (level == 11) {
-
-
-                calcTime = TIMER_THREE;
-                textviewText = TIMER_TEXT_STAGE_THREE;
-
-            } else if (level == 12) {
-
-
-                calcTime = TIMER_FOUR;
-                textviewText = TIMER_TEXT_STAGE_FOUR;
-
-            } else if (level == 13) {
-
-
-                calcTime = TIMER_ONE;
-                textviewText = TIMER_TEXT_STAGE_ONE;
-
-
-            } else if (level == 14) {
-
-                calcTime = TIMER_TWO;
-                textviewText = TIMER_TEXT_STAGE_TWO;
-
-            } else if (level == 15) {
-
-
-                calcTime = TIMER_THREE;
-                textviewText = TIMER_TEXT_STAGE_THREE;
-
-            } else if (level == 16) {
-
-                calcTime = TIMER_FOUR;
-                textviewText = TIMER_TEXT_STAGE_FOUR;
-
-
-            }
-
-        if(timer != null)
-            timer = null;
-
-        timer = new CounterClass(calcTime, 1000);
-        textViewTime.setText(textviewText);
-        timer.start();
+        return inflater.inflate(layout, container, false)
     }
 
-    @Override
-    public void onStop(){
-        super.onStop();
+    private fun setTimer() {
+        if (level == 1) {
+            calcTime = TIMER_ONE
+            textviewText = TIMER_TEXT_STAGE_ONE
+        } else if (level == 2) {
+            calcTime = TIMER_TWO
+            textviewText = TIMER_TEXT_STAGE_TWO
+        } else if (level == 3) {
+            calcTime = TIMER_THREE
+            textviewText = TIMER_TEXT_STAGE_THREE
+        } else if (level == 4) {
+            calcTime = TIMER_FOUR
+            textviewText = TIMER_TEXT_STAGE_FOUR
+        } else if (level == 5) {
+            calcTime = TIMER_ONE
+            textviewText = TIMER_TEXT_STAGE_ONE
+        } else if (level == 6) {
+            calcTime = TIMER_TWO
+            textviewText = TIMER_TEXT_STAGE_TWO
+        } else if (level == 7) {
+            calcTime = TIMER_THREE
+            textviewText = TIMER_TEXT_STAGE_THREE
+        } else if (level == 8) {
+            calcTime = TIMER_FOUR
+            textviewText = TIMER_TEXT_STAGE_FOUR
+        } else if (level == 9) {
+            calcTime = TIMER_ONE
+            textviewText = TIMER_TEXT_STAGE_ONE
+        } else if (level == 10) {
+            calcTime = TIMER_TWO
+            textviewText = TIMER_TEXT_STAGE_TWO
+        } else if (level == 11) {
+            calcTime = TIMER_THREE
+            textviewText = TIMER_TEXT_STAGE_THREE
+        } else if (level == 12) {
+            calcTime = TIMER_FOUR
+            textviewText = TIMER_TEXT_STAGE_FOUR
+        } else if (level == 13) {
+            calcTime = TIMER_ONE
+            textviewText = TIMER_TEXT_STAGE_ONE
+        } else if (level == 14) {
+            calcTime = TIMER_TWO
+            textviewText = TIMER_TEXT_STAGE_TWO
+        } else if (level == 15) {
+            calcTime = TIMER_THREE
+            textviewText = TIMER_TEXT_STAGE_THREE
+        } else if (level == 16) {
+            calcTime = TIMER_FOUR
+            textviewText = TIMER_TEXT_STAGE_FOUR
+        }
 
-        saveFlag = false;
-        setIntent();
+        if (timer != null) timer = null
 
-
+        timer = CounterClass(calcTime, 1000)
+        textViewTime!!.text = textviewText
+        timer!!.start()
     }
-    public void setIntent(){
-        getActivity().getIntent().putExtra("timerStageText", textViewTime.getText().toString());
-        getActivity().getIntent().putExtra("timerValue", millis);
-    }
-    public  void setState(Boolean value){
-        state = value;
-    }
 
-    public  void setSaveflg(Boolean value){
-        saveFlag = value;
+    override fun onStop() {
+        super.onStop()
+
+        saveFlag = false
+        setIntent()
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
+    fun setIntent() {
+        requireActivity().intent.putExtra("timerStageText", textViewTime!!.text.toString())
+        requireActivity().intent.putExtra("timerValue", millis)
+    }
 
-        if(state == true){
-                if(saveFlag == false){
+    fun setState(value: Boolean?) {
+        currentState = value
+    }
 
-                    if(getActivity().getIntent().getExtras() != null) {
-                        if(gridView != null ){
-                            gridAdapter = tempGridAdapter;
-                            gridView.setAdapter(gridAdapter);
-                            flagChangeGridImages = false;
-                        }
-                        calcTime = getActivity().getIntent().getLongExtra("timerValue", 60000);
-                        textviewText = getActivity().getIntent().getStringExtra("timerStageText");
-                        if(timer != null)
-                            timer = null;
+    fun setSaveflg(value: Boolean?) {
+        saveFlag = value
+    }
 
-                        timer = new CounterClass(calcTime, 1000);
-                        textViewTime.setText(textviewText);
-                        timer.start();
+    override fun onResume() {
+        super.onResume()
+
+        if (currentState == true) {
+            if (saveFlag == false) {
+                if (requireActivity().intent.extras != null) {
+                    if (gridView != null) {
+                        gridAdapter = tempGridAdapter
+                        gridView!!.adapter = gridAdapter
+                        flagChangeGridImages = false
                     }
+                    calcTime = requireActivity().intent.getLongExtra("timerValue", 60000)
+                    textviewText = requireActivity().intent.getStringExtra("timerStageText")
+                    if (timer != null) timer = null
 
-
-        }}
-        tvLevelNo.setText("Level " + level);
+                    timer = CounterClass(calcTime, 1000)
+                    textViewTime!!.text = textviewText
+                    timer!!.start()
+                }
+            }
+        }
+        tvLevelNo!!.text = "Level $level"
     }
 
-        @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            args = getArguments();
-            if (args != null) {
-                level = args.getInt(LEVEL);
-                numColumns = args.getInt("NumColumns");
-                numImgs = args.getInt("NumImgs");
-            }
-
-            flagChangeGridImages = false;
-
-        mListener = (LevelsFragmentListener) getActivity();
-        textViewTime = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.textViewTime);
-        tvMasterMind = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvMasterMindFragment);
-            tvMemorizeInfo= (AutoResizeTextView)getActivity().findViewById(com.memorygame.memorydrill.R.id.tvMemorizeInfo);
-            tvLevelNo = (TextView)getActivity().findViewById(com.memorygame.memorydrill.R.id.tvLevelNo);
-
-            numNewImgs = 1;
-
-            Typeface face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/papyrus.ttf");
-            tvMasterMind.setTypeface(face);
-
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/digital.ttf");
-            textViewTime.setTypeface(face);
-
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/chiller.ttf");
-            tvMemorizeInfo.setTypeface(face);
-
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/forte.ttf");
-            tvLevelNo.setTypeface(face);
-
-            if(imgs == null){
-
-                imgs = getResources().obtainTypedArray(com.memorygame.memorydrill.R.array.image_ids);
-            }
-            setNumbers();
-
-            columnWidth = WIDTH_ONE;
-
-
-            btnContinue = (Button) getActivity().findViewById(com.memorygame.memorydrill.R.id.btncontinue);
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/mvboli.ttf");
-            btnContinue.setTypeface(face);
-            btnContinue.setTextSize(20);
-
-            gridView = (GridView) getActivity().findViewById(com.memorygame.memorydrill.R.id.gridView);
-            saveFlag = true;
-
-            if(gridAdapter != null) {
-                gridAdapter = null;
-            }
-
-            gridItems = getImages();
-            tempGridItems = setBrainImage();
-
-            gridAdapter = new GridViewAdapter(getActivity(), com.memorygame.memorydrill.R.layout.layout_grid_item, gridItems);
-            gridView.setAdapter(gridAdapter);
-            gridView.setNumColumns(numColumns);
-            gridView.setColumnWidth(columnWidth);
-
-            btnContinue.setOnClickListener(this);
-
-            }
-
-            @Override
-            public void onStart() {
-                super.onStart();
-
-                if(saveFlag == true)
-                {
-                    setTimer();
-
-                }
-
-            }
-
-    public  ArrayList<GridImageView> setBrainImage(){
-        // Prepare some dummy data for gridview
-
-            Bitmap bitmap= BitmapFactory.decodeResource(getResources(), com.memorygame.memorydrill.R.drawable.brain);
-
-        final ArrayList<GridImageView> imageItems = new ArrayList<>();
-
-            for (int i = 0; i < numImgs; i++) {
-
-                imageItems.add(new GridImageView(bitmap, null, com.memorygame.memorydrill.R.drawable.brain));
-
-            }
-            return imageItems;
+        args = arguments
+        if (args != null) {
+            level = args!!.getInt(LEVEL)
+            numColumns = args!!.getInt("NumColumns")
+            numImgs = args!!.getInt("NumImgs")
         }
 
-            @Override
-            public void onPause() {
-                super.onPause();
+        flagChangeGridImages = false
 
-                timer.cancel();
+        mListener = activity as LevelsFragmentListener?
+        textViewTime = requireActivity().findViewById<View>(R.id.textViewTime) as TextView
+        tvMasterMind = requireActivity().findViewById<View>(R.id.tvMasterMindFragment) as TextView
+        tvMemorizeInfo =
+            requireActivity().findViewById<View>(R.id.tvMemorizeInfo) as AutoResizeTextView
+        tvLevelNo = requireActivity().findViewById<View>(R.id.tvLevelNo) as TextView
 
-                if(flagChangeGridImages == false)
-                {
-                    tempGridAdapter = gridAdapter;
-                }
+        numNewImgs = 1
 
-                if (gridAdapter != null) {
-                    gridAdapter = null;
-                }
-                if(gridView != null) {
+        var face = Typeface.createFromAsset(
+            requireActivity().assets, "fonts/papyrus.ttf"
+        )
+        tvMasterMind!!.typeface = face
 
-                    gridAdapter = new GridViewAdapter(getActivity(), com.memorygame.memorydrill.R.layout.layout_grid_item, tempGridItems);
-                    flagChangeGridImages = true;
-                    gridView.setAdapter(gridAdapter);
+        face = Typeface.createFromAsset(requireActivity().assets, "fonts/digital.ttf")
+        textViewTime!!.typeface = face
 
-                }
+        face = Typeface.createFromAsset(requireActivity().assets, "fonts/chiller.ttf")
+        tvMemorizeInfo!!.typeface = face
 
-    }
+        face = Typeface.createFromAsset(requireActivity().assets, "fonts/forte.ttf")
+        tvLevelNo!!.typeface = face
 
-
-    @Override
-    public void onClick(View v) {
-
-        String text = "Identify the new image by tapping on it...";
-        tvMemorizeInfo.setText(text);
-
-        btnContinue.setVisibility(View.GONE);
-
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imgs.getResourceId((Integer) numbers.get(numImgs), -1));
-
-        if (imageNew != null) {
-            imageNew = null;
+        if (imgs == null) {
+            imgs = resources.obtainTypedArray(R.array.image_ids)
         }
-        imageNew = new GridImageView(bitmap, null, imgs.getResourceId((Integer) numbers.get(numImgs), -1));
+        setNumbers()
 
-        newPos = (Integer) numbers.get(numImgs);
-        numbers.set(numImgs - 1, numbers.get(numImgs));
-        numbers.remove(numImgs);
+        columnWidth = WIDTH_ONE
 
-        Collections.shuffle(numbers);
+
+        btnContinue = requireActivity().findViewById<View>(R.id.btncontinue) as Button
+        face = Typeface.createFromAsset(requireActivity().assets, "fonts/mvboli.ttf")
+        btnContinue!!.typeface = face
+        btnContinue!!.textSize = 20f
+
+        gridView = requireActivity().findViewById<View>(R.id.gridView) as GridView
+        saveFlag = true
 
         if (gridAdapter != null) {
-            gridAdapter = null;
+            gridAdapter = null
         }
 
-        if(gridItems!= null){
-            gridItems = null;
+        gridItems = images
+        tempGridItems = setBrainImage()
+
+        gridAdapter = GridViewAdapter(requireActivity(), R.layout.layout_grid_item, gridItems!!)
+        gridView!!.adapter = gridAdapter
+        gridView!!.numColumns = numColumns
+        gridView!!.columnWidth = columnWidth
+
+        btnContinue!!.setOnClickListener(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (saveFlag == true) {
+            setTimer()
         }
-        gridItems = getImages();
-        gridAdapter = new GridViewAdapter(getActivity(), com.memorygame.memorydrill.R.layout.layout_grid_item, gridItems);
-        gridView.setAdapter(gridAdapter);
-        gridView.setNumColumns(numColumns);
-        gridView.setColumnWidth(columnWidth);
-        gridView.setOnItemClickListener(this);
-
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        timer.cancel();
-        timeRemaining = (calcTime - millis) / 1000 + 1;
-        GridImageView item = (GridImageView) parent.getItemAtPosition(position);
-        mListener.onImageSelected(newPos, (Integer) numbers.get(position), timeRemaining, item.getId(), imageNew.getId(), level);
+    fun setBrainImage(): ArrayList<GridImageView> {
+        // Prepare some dummy data for gridview
 
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.brain)
+
+        val imageItems = ArrayList<GridImageView>()
+
+        for (i in 0 until numImgs) {
+            imageItems.add(GridImageView(bitmap, null, R.drawable.brain))
+        }
+        return imageItems
     }
 
-    private void setNumbers() {
+    override fun onPause() {
+        super.onPause()
 
-        if(numbers == null){
-            numbers = new ArrayList();
-            while (numbers.size() < numImgs + numNewImgs) {
-                int random = getRandomNumberInRange(0, imgs.length() - 1); //this is your method to return a random int
+        timer!!.cancel()
 
-                if (!numbers.contains(random))
-                    numbers.add(random);
+        if (flagChangeGridImages == false) {
+            tempGridAdapter = gridAdapter
+        }
+
+        if (gridAdapter != null) {
+            gridAdapter = null
+        }
+        if (gridView != null) {
+            gridAdapter =
+                GridViewAdapter(requireActivity(), R.layout.layout_grid_item, tempGridItems!!)
+            flagChangeGridImages = true
+            gridView!!.adapter = gridAdapter
+        }
+    }
+
+
+    override fun onClick(v: View) {
+        val text = "Identify the new image by tapping on it..."
+        tvMemorizeInfo!!.text = text
+
+        btnContinue!!.visibility = View.GONE
+
+        val bitmap = BitmapFactory.decodeResource(
+            resources, imgs!!.getResourceId(
+                (numbers!![numImgs] as Int), -1
+            )
+        )
+
+        if (imageNew != null) {
+            imageNew = null
+        }
+        imageNew =
+            GridImageView(bitmap, null, imgs!!.getResourceId((numbers!![numImgs] as Int), -1))
+
+        newPos = numbers!![numImgs] as Int
+        numbers!!.set(numImgs - 1, numbers!![numImgs])
+        numbers!!.removeAt(numImgs)
+
+        Collections.shuffle(numbers)
+
+        if (gridAdapter != null) {
+            gridAdapter = null
+        }
+
+        if (gridItems != null) {
+            gridItems = null
+        }
+        gridItems = images
+        gridAdapter = GridViewAdapter(requireActivity(), R.layout.layout_grid_item, gridItems!!)
+        gridView!!.adapter = gridAdapter
+        gridView!!.numColumns = numColumns
+        gridView!!.columnWidth = columnWidth
+        gridView!!.onItemClickListener = this
+    }
+
+    override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        timer!!.cancel()
+        timeRemaining = (calcTime - millis) / 1000 + 1
+        val item = parent.getItemAtPosition(position) as GridImageView
+        mListener!!.onImageSelected(
+            newPos,
+            numbers!![position] as Int,
+            timeRemaining,
+            item.id,
+            imageNew!!.id,
+            level
+        )
+    }
+
+    private fun setNumbers() {
+        while (numbers.size < numImgs + numNewImgs) {
+            val random = getRandomNumberInRange(
+                0,
+                imgs!!.length() - 1
+            ) //this is your method to return a random int
+
+            if (!numbers.contains(random)) numbers.add(random)
+        }
+    }
+
+    private val images: ArrayList<GridImageView>
+        // Prepare some dummy data for gridview
+        get() {
+            var bitmap: Bitmap? = null
+            val imageItems = ArrayList<GridImageView>()
+
+            for (i in 0 until numImgs) {
+                bitmap = BitmapFactory.decodeResource(
+                    resources,
+                    imgs!!.getResourceId((numbers!![i] as Int), -1)
+                )
+                imageItems.add(
+                    GridImageView(
+                        bitmap,
+                        null,
+                        imgs!!.getResourceId((numbers!![i] as Int), -1)
+                    )
+                )
             }
+            return imageItems
         }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        saveFlag = true
+        requireActivity().intent.removeExtra("timerValue")
+        requireActivity().intent.removeExtra("timerStageText")
 
+
+        requireArguments().remove("LEVEL")
+        tvMasterMind = null
+        gridAdapter = null
+        btnContinue = null
+        numbers = mutableListOf()
+        imgs = null
+        timer = null
+        args = null
+        imageNew = null
+        mListener = null
+        gridView = null
+        textViewTime = null
+        tvMemorizeInfo = null
+        tvLevelNo = null
+
+        textviewText = null
+        gridItems = null
+        tempGridItems = null
     }
 
-    // Prepare some dummy data for gridview
-    private ArrayList<GridImageView> getImages() {
-        Bitmap bitmap = null;
-        final ArrayList<GridImageView> imageItems = new ArrayList<>();
-
-        for (int i = 0; i < numImgs; i++) {
-
-            bitmap= BitmapFactory.decodeResource(getResources(), imgs.getResourceId((Integer) numbers.get(i), -1));
-            imageItems.add(new GridImageView(bitmap, null, imgs.getResourceId((Integer) numbers.get(i), -1)));
-
-        }
-        return imageItems;
-    }
-
-    private static int getRandomNumberInRange(int min, int max) {
-
-        if (min >= max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
-
-        return (int) (Math.random() * ((max - min) + 1)) + min;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        saveFlag = true;
-        getActivity().getIntent().removeExtra("timerValue");
-        getActivity().getIntent().removeExtra("timerStageText");
-
-
-        getArguments().remove("LEVEL");
-        tvMasterMind = null;
-         gridAdapter = null;
-         btnContinue = null;
-         numbers = null;
-         imgs = null;
-         timer = null;
-         args = null;
-         imageNew= null;
-         mListener= null;
-        gridView = null;
-         textViewTime = null;
-        tvMemorizeInfo = null;
-        tvLevelNo=null;
-
-        textviewText = null;
-         gridItems = null;
-         tempGridItems = null;
-    }
-
-    public class CounterClass extends CountDownTimer {
-
-        public CounterClass(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-            // TODO Auto-generated constructor stub
-        }
-
-        @Override
-        public void onTick(long millisUntilFinished) {
+    inner class CounterClass(millisInFuture: Long, countDownInterval: Long) :
+        CountDownTimer(millisInFuture, countDownInterval) {
+        override fun onTick(millisUntilFinished: Long) {
             // TODO Auto-generated method stub
 
-            millis = millisUntilFinished;
-            String hms = String.format("%02d:%02d",
-                    TimeUnit.MILLISECONDS.toMinutes(millis),
-                    TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+            millis = millisUntilFinished
+            val hms = String.format(
+                "%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(millis),
+                TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(
+                    TimeUnit.MILLISECONDS.toMinutes(
+                        millis
+                    )
+                )
+            )
 
-            textViewTime.setText(hms);
-
-
+            textViewTime!!.text = hms
         }
 
-        @Override
-        public void onFinish() {
+        override fun onFinish() {
             // TODO Auto-generated method stub
-            textViewTime.setText("00:00");
-            mListener.timerFinished(level);
-
-
+            textViewTime!!.text = "00:00"
+            mListener!!.timerFinished(level)
         }
     }
 
+    companion object {
+        const val LEVEL: String = "LEVEL"
+        const val WIDTH_ONE: Int = 35
+
+        const val TIMER_TEXT_STAGE_ONE: String = "01:00"
+        const val TIMER_TEXT_STAGE_TWO: String = "00:45"
+        const val TIMER_TEXT_STAGE_THREE: String = "00:30"
+        const val TIMER_TEXT_STAGE_FOUR: String = "00:15"
+
+        const val TIMER_ONE: Long = 60000
+        const val TIMER_TWO: Long = 45000
+        const val TIMER_THREE: Long = 30000
+        const val TIMER_FOUR: Long = 15000
+        private fun getRandomNumberInRange(min: Int, max: Int): Int {
+            require(min < max) { "max must be greater than min" }
+
+            return (Math.random() * ((max - min) + 1)).toInt() + min
+        }
+    }
 }
 
 

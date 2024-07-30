@@ -1,87 +1,79 @@
-package com.memorygame.memorydrill;
+package com.memorygame.memorydrill
 
-import android.content.Context;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
+import android.content.Context
+import android.graphics.Typeface
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 
 /**
  * Created by aspire on 04-07-2016.
  */
-public class HelpFragment extends Fragment implements View.OnClickListener {
+class HelpFragment : Fragment(), View.OnClickListener {
+    private var btnClose: Button? = null
+    private var tvMasterMindFragment: TextView? = null
+    private var tvHelpTitle: TextView? = null
+    private var tvHelpText: TextView? = null
+    var helpFragmentListener: HelpFragmentListener? = null
 
-    private Button btnClose;
-    private TextView tvMasterMindFragment;
-    private TextView tvHelpTitle;
-    private TextView tvHelpText;
-    HelpFragmentListener helpFragmentListener;
 
-
-    public HelpFragment() {
+    interface HelpFragmentListener {
+        fun destroyFragment()
     }
 
-    public interface HelpFragmentListener{
-        void destroyFragment();
-    }
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val rootView = inflater.inflate(R.layout.fragment_help, container, false)
 
-        View rootView = inflater.inflate(com.memorygame.memorydrill.R.layout.fragment_help, container, false);
-
-        return  rootView;
+        return rootView
     }
-        @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
 
-            helpFragmentListener = (HelpFragmentListener) getActivity();
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            tvMasterMindFragment = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvMasterMindFragment);
-            tvHelpText = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvHelpText);
-            tvHelpTitle = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvHelpTitle);
+        helpFragmentListener = activity as HelpFragmentListener?
 
-            Typeface face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/papyrus.ttf");
-            tvMasterMindFragment.setTypeface(face);
+        tvMasterMindFragment = activity!!.findViewById<View>(R.id.tvMasterMindFragment) as TextView
+        tvHelpText = activity!!.findViewById<View>(R.id.tvHelpText) as TextView
+        tvHelpTitle = activity!!.findViewById<View>(R.id.tvHelpTitle) as TextView
 
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/bradhitc.ttf");
-            tvHelpText.setTypeface(face);
+        var face = Typeface.createFromAsset(
+            activity!!.assets, "fonts/papyrus.ttf"
+        )
+        tvMasterMindFragment!!.typeface = face
 
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/bradhitc.ttf");
-            tvHelpTitle.setTypeface(face);
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/bradhitc.ttf")
+        tvHelpText!!.typeface = face
 
-            btnClose = (Button)getActivity().findViewById(com.memorygame.memorydrill.R.id.btnClose);
-            btnClose.setOnClickListener(this);
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/bradhitc.ttf")
+        tvHelpTitle!!.typeface = face
 
-        }
-    @Override
-    public void onStart(){
-        super.onStart();
+        btnClose = activity!!.findViewById<View>(R.id.btnClose) as Button
+        btnClose!!.setOnClickListener(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
 
-    @Override
-    public void onClick(View v) {
-
-        helpFragmentListener.destroyFragment();
+    override fun onClick(v: View) {
+        helpFragmentListener!!.destroyFragment()
     }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        helpFragmentListener = null;
 
+    override fun onDestroy() {
+        super.onDestroy()
+        helpFragmentListener = null
     }
 }
 

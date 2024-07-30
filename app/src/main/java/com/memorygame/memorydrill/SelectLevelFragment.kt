@@ -1,207 +1,157 @@
-package com.memorygame.memorydrill;
+package com.memorygame.memorydrill
 
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import java.lang.reflect.Field;
+import android.content.Context
+import android.graphics.Color
+import android.graphics.Typeface
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 
 /**
  * Created by aspire on 04-07-2016.
  */
-public class SelectLevelFragment extends Fragment implements View.OnClickListener {
+class SelectLevelFragment : Fragment(), View.OnClickListener {
+    private var tvMasterMind: TextView? = null
+    private var tvStageOne: TextView? = null
+    private var tvStageTwo: TextView? = null
+    private var tvStageThree: TextView? = null
+    private var tvStageFour: TextView? = null
+    private var tvSelectLevel: AutoResizeTextView? = null
+    private var helpBtn: Button? = null
+    private var level = 0
+    var args: Bundle? = null
+    var mListener: SelectLevelFragmentListener? = null
 
-    private TextView tvMasterMind;
-    private TextView tvStageOne;
-    private TextView tvStageTwo;
-    private TextView tvStageThree;
-    private TextView tvStageFour;
-    private AutoResizeTextView tvSelectLevel;
-    private Button helpBtn;
-    private int level;
-    Bundle args;
-    SelectLevelFragmentListener mListener;
 
-
-    public interface SelectLevelFragmentListener{
-        void onBtnSelected(int level);
-    }
-    public SelectLevelFragment() {
-    }
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
-    @Override
-    public void onPause(){
-
-        super.onPause();
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
+    interface SelectLevelFragmentListener {
+        fun onBtnSelected(level: Int)
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(com.memorygame.memorydrill.R.layout.activity_level, container, false);
-
-        return  rootView;
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
     }
-        @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
 
-            mListener = (SelectLevelFragmentListener) getActivity();
-            args = getArguments();
-            level = args.getInt("Level");
-            tvMasterMind = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvMasterMind);
-            tvStageOne = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvStageOne);
-            tvStageTwo = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvStageTwo);
-            tvStageThree = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvStageThree);
-            tvStageFour = (TextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tvStageFour);
-            helpBtn = (Button)getActivity().findViewById(com.memorygame.memorydrill.R.id.btnHelp);
-            tvSelectLevel = (AutoResizeTextView) getActivity().findViewById(com.memorygame.memorydrill.R.id.tv_select_level);
-            helpBtn.setOnClickListener(this);
+    override fun onPause() {
+        super.onPause()
+    }
 
-            Typeface face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/papyrus.ttf");
-            tvMasterMind.setTypeface(face);
+    override fun onResume() {
+        super.onResume()
+    }
 
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/mvboli.ttf");
-            tvSelectLevel.setTypeface(face);
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val rootView = inflater.inflate(R.layout.activity_level, container, false)
+
+        return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        mListener = activity as SelectLevelFragmentListener?
+        args = arguments
+        level = args!!.getInt("Level")
+        tvMasterMind = activity!!.findViewById<View>(R.id.tvMasterMind) as TextView
+        tvStageOne = activity!!.findViewById<View>(R.id.tvStageOne) as TextView
+        tvStageTwo = activity!!.findViewById<View>(R.id.tvStageTwo) as TextView
+        tvStageThree = activity!!.findViewById<View>(R.id.tvStageThree) as TextView
+        tvStageFour = activity!!.findViewById<View>(R.id.tvStageFour) as TextView
+        helpBtn = activity!!.findViewById<View>(R.id.btnHelp) as Button
+        tvSelectLevel = activity!!.findViewById<View>(R.id.tv_select_level) as AutoResizeTextView
+        helpBtn!!.setOnClickListener(this)
+
+        var face = Typeface.createFromAsset(
+            activity!!.assets, "fonts/papyrus.ttf"
+        )
+        tvMasterMind!!.typeface = face
+
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/mvboli.ttf")
+        tvSelectLevel!!.typeface = face
 
 
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/mvboli.ttf");
-            tvStageOne.setTypeface(face);
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/mvboli.ttf")
+        tvStageOne!!.typeface = face
 
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/mvboli.ttf");
-            tvStageTwo.setTypeface(face);
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/mvboli.ttf")
+        tvStageTwo!!.typeface = face
 
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/mvboli.ttf");
-            tvStageThree.setTypeface(face);
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/mvboli.ttf")
+        tvStageThree!!.typeface = face
 
-            face = Typeface.createFromAsset(getActivity().getAssets(), "fonts/mvboli.ttf");
-            tvStageFour.setTypeface(face);
+        face = Typeface.createFromAsset(activity!!.assets, "fonts/mvboli.ttf")
+        tvStageFour!!.typeface = face
 
-            Button btn;
-            for(int i=1; i<=level;i++)
-            {
-                if(i == 17){
-                    break;
+        var btn: Button
+        for (i in 1..level) {
+            if (i == 17) {
+                break
+            } else {
+                val resourceName = "btn_$i"
+                try {
+                    val res: Class<*> = R.id::class.java
+                    val field = res.getField(resourceName)
+                    val resID = field.getInt(null)
+                    btn = activity!!.findViewById<View>(resID) as Button
+                    btn.text = " $i "
+                    btn.setTextColor(Color.WHITE)
+                    btn.textSize = 25f
+                    btn.background = null
+                    btn.background =
+                        ContextCompat.getDrawable(activity!!, R.drawable.button_selector)
+                    //  btn.setBackground(getActivity().getDrawable(com.memorygame.memorydrill.R.drawable.button_selector));
+                    btn.isEnabled = true
+                    btn.setOnClickListener(this)
+                } catch (e: Exception) {
+                    Log.e("MyTag", "Failure to get drawable id.", e)
                 }
-                else {
-                    String resourceName = "btn_" + i;
-                    try {
-                        Class res = com.memorygame.memorydrill.R.id.class;
-                        Field field = res.getField(resourceName);
-                        int resID = field.getInt(null);
-                        btn = (Button) getActivity().findViewById(resID);
-                        btn.setText(" " + i + " ");
-                        btn.setTextColor(Color.WHITE);
-                        btn.setTextSize(25);
-                        btn.setBackground(null);
-                        btn.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.button_selector));
-                      //  btn.setBackground(getActivity().getDrawable(com.memorygame.memorydrill.R.drawable.button_selector));
-                        btn.setEnabled(true);
-                        btn.setOnClickListener(this);
-                    } catch (Exception e) {
-                        Log.e("MyTag", "Failure to get drawable id.", e);
-                    }
-                }
-
-
-
             }
-
-        }
-    @Override
-    public void onStart(){
-        super.onStart();
-
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()){
-            case com.memorygame.memorydrill.R.id.btn_1:
-                mListener.onBtnSelected(1);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_2:
-                mListener.onBtnSelected(2);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_3:
-                mListener.onBtnSelected(3);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_4:
-                mListener.onBtnSelected(4);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_5:
-                mListener.onBtnSelected(5);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_6:
-                mListener.onBtnSelected(6);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_7:
-                mListener.onBtnSelected(7);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_8:
-                mListener.onBtnSelected(8);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_9:
-                mListener.onBtnSelected(9);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_10:
-                mListener.onBtnSelected(10);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_11:
-                mListener.onBtnSelected(11);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_12:
-                mListener.onBtnSelected(12);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_13:
-                mListener.onBtnSelected(13);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_14:
-                mListener.onBtnSelected(14);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_15:
-                mListener.onBtnSelected(15);
-                break;
-            case com.memorygame.memorydrill.R.id.btn_16:
-                mListener.onBtnSelected(16);
-                break;
-            case com.memorygame.memorydrill.R.id.btnHelp:
-                mListener.onBtnSelected(10000);
-                break;
-
-
         }
     }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        tvMasterMind = null;
-        tvStageOne = null;
-        tvStageTwo = null;
-        tvStageThree = null;
-        tvStageFour = null;
-        args = null;
-        mListener = null;
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.btn_1 -> mListener!!.onBtnSelected(1)
+            R.id.btn_2 -> mListener!!.onBtnSelected(2)
+            R.id.btn_3 -> mListener!!.onBtnSelected(3)
+            R.id.btn_4 -> mListener!!.onBtnSelected(4)
+            R.id.btn_5 -> mListener!!.onBtnSelected(5)
+            R.id.btn_6 -> mListener!!.onBtnSelected(6)
+            R.id.btn_7 -> mListener!!.onBtnSelected(7)
+            R.id.btn_8 -> mListener!!.onBtnSelected(8)
+            R.id.btn_9 -> mListener!!.onBtnSelected(9)
+            R.id.btn_10 -> mListener!!.onBtnSelected(10)
+            R.id.btn_11 -> mListener!!.onBtnSelected(11)
+            R.id.btn_12 -> mListener!!.onBtnSelected(12)
+            R.id.btn_13 -> mListener!!.onBtnSelected(13)
+            R.id.btn_14 -> mListener!!.onBtnSelected(14)
+            R.id.btn_15 -> mListener!!.onBtnSelected(15)
+            R.id.btn_16 -> mListener!!.onBtnSelected(16)
+            R.id.btnHelp -> mListener!!.onBtnSelected(10000)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tvMasterMind = null
+        tvStageOne = null
+        tvStageTwo = null
+        tvStageThree = null
+        tvStageFour = null
+        args = null
+        mListener = null
     }
 }
 
