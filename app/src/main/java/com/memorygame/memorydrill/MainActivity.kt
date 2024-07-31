@@ -21,12 +21,13 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
@@ -34,11 +35,6 @@ import com.memorygame.memorydrill.HelpFragment.HelpFragmentListener
 import com.memorygame.memorydrill.LevelInfoFragment.LevelInfoFragmentListener
 import com.memorygame.memorydrill.LevelsFragment.LevelsFragmentListener
 import com.memorygame.memorydrill.SelectLevelFragment.SelectLevelFragmentListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlin.time.Duration
 
 /**
  * Created by aspire on 04-07-2016.
@@ -76,6 +72,8 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
     var llToDoOne: LinearLayout? = null
     var llToDoSecond: LinearLayout? = null
     var level: Int = 0
+
+    private lateinit var appUpdateManager: AppUpdateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,13 +117,16 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
 
     private fun checkForUpdates() {
         try {
-            val appUpdateManager =
-                AppUpdateManagerFactory.create(requireNotNull(applicationContext))
+            appUpdateManager = AppUpdateManagerFactory.create(requireNotNull(applicationContext))
             val appUpdateInfoTask = appUpdateManager.appUpdateInfo
             val activityResultLauncher =
                 registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
                     if (result.resultCode == RESULT_OK) {
-                        Snackbar.make(findViewById(R.id.main_container), "Starting to update",Snackbar.LENGTH_INDEFINITE).show()
+                        Snackbar.make(
+                            findViewById(R.id.main_container),
+                            "Starting to update",
+                            Snackbar.LENGTH_INDEFINITE
+                        ).show()
                     }
                 }
             appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
@@ -143,7 +144,6 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
                     "Pallavi isUpdateAllowedForFlexible",
                     "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)}"
                 )
-
                 Log.d(
                     "Pallavi isUpdateAllowedForImmediate",
                     "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)}"
@@ -152,23 +152,24 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
                 Log.d("Pallavi hasUpdate", "$hasUpdate")
                 Log.d("Pallavi staleness", "${appUpdateInfo.clientVersionStalenessDays()}")
 
-
-                if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) && appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                    Log.d("Pallavi inside is updatetype allowed", "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)}")
-                    appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        activityResultLauncher,
-                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
-                    )
-                } else {
-                    if (hasUpdate) {
+                if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                    Snackbar.make(
+                        findViewById(R.id.main_container),
+                        "An update is downloaded, do you want to install it? ",
+                        Snackbar.LENGTH_INDEFINITE
+                    ).apply {
+                            setAction("Install") {
+                                appUpdateManager.completeUpdate()
+                            }
+                        }
+                        .show()
+                } else if (hasUpdate) {
                         triggerFlexibleUpdate(
                             appUpdateManager,
                             appUpdateInfo,
                             activityResultLauncher,
                             appUpdateOptions
                         )
-                    }
                 }
             }
                 .addOnFailureListener {
@@ -193,26 +194,48 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
             activityResultLauncher,
             appUpdateOptions
         )
-        appUpdateManager.registerListener { state ->
+        appUpdateManager.registerListener(listener)
+
+    }
+
+    private val listener = object : InstallStateUpdatedListener {
+        override fun onStateUpdate(state: InstallState) {
             val installStatus = state.installStatus()
             Log.d("Pallavi installstatus", "$installStatus")
             Log.d("Pallavi installErrorCode", "${state.installErrorCode()}")
 
-            if (installStatus == InstallStatus.DOWNLOADED)
-            Snackbar.make(findViewById(R.id.main_container), "Downloaded with $installStatus",Snackbar.LENGTH_INDEFINITE)
-                .apply {
-                    setAction("Restart") {
-                        appUpdateManager.completeUpdate()
+            if (installStatus == InstallStatus.DOWNLOADED) {
+                Snackbar.make(
+                    findViewById(R.id.main_container),
+                    "Downloaded with $installStatus",
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                    .apply {
+                        setAction("Restart") {
+                            appUpdateManager.completeUpdate()
+                        }
                     }
-                }
-                .show()
+                    .show()
+            }
 
-            if (installStatus == InstallStatus.FAILED)
+            if (installStatus == InstallStatus.FAILED) {
                 Toast.makeText(
                     applicationContext,
                     "Failed with $installStatus",
                     Toast.LENGTH_LONG
                 ).show()
+                appUpdateManager.unregisterListener(this)
+            }
+
+            if (installStatus == InstallStatus.CANCELED) {
+                Toast.makeText(
+                    applicationContext,
+                    "Cancelled with $installStatus",
+                    Toast.LENGTH_LONG
+                ).show()
+                appUpdateManager.unregisterListener(this)
+            }
+
             if (installStatus == InstallStatus.PENDING)
                 Toast.makeText(
                     applicationContext,
@@ -220,8 +243,15 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
                     Toast.LENGTH_LONG
                 ).show()
 
+            if (installStatus == InstallStatus.INSTALLED) {
+                Toast.makeText(
+                    applicationContext,
+                    "Pending with $installStatus",
+                    Toast.LENGTH_LONG
+                ).show()
+                appUpdateManager.unregisterListener(this)
+            }
         }
-
     }
 
     override fun onBtnSelected(level: Int) {
