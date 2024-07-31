@@ -143,6 +143,7 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
                     "Pallavi isUpdateAllowedForFlexible",
                     "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)}"
                 )
+
                 Log.d(
                     "Pallavi isUpdateAllowedForImmediate",
                     "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)}"
