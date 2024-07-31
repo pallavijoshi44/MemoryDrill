@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MemoryDrill.iml" filepath="$PROJECT_DIR$/.idea/modules/MemoryDrill.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MemoryDrill.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MemoryDrill.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MemoryDrill.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MemoryDrill.app.androidTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MemoryDrill.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MemoryDrill.app.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MemoryDrill.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MemoryDrill.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Memory_Drill.iml" filepath="$PROJECT_DIR$/.idea/modules/Memory_Drill.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Memory_Drill.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Memory_Drill.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Memory_Drill.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Memory_Drill.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Memory_Drill.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Memory_Drill.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Memory_Drill.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Memory_Drill.app.unitTest.iml" />
     </modules>
   </component>
 </project>

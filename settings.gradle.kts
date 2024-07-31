@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MemoryDrill"
+rootProject.name = "Memory Drill"
 include(":app")
  

@@ -21,6 +21,8 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.LifecycleCoroutineScope
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -32,6 +34,10 @@ import com.memorygame.memorydrill.HelpFragment.HelpFragmentListener
 import com.memorygame.memorydrill.LevelInfoFragment.LevelInfoFragmentListener
 import com.memorygame.memorydrill.LevelsFragment.LevelsFragmentListener
 import com.memorygame.memorydrill.SelectLevelFragment.SelectLevelFragmentListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.time.Duration
 
 /**
@@ -119,8 +125,7 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
             val activityResultLauncher =
                 registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
                     if (result.resultCode == RESULT_OK) {
-                        Toast.makeText(applicationContext, "Starting to update", Toast.LENGTH_LONG)
-                            .show()
+                        Snackbar.make(findViewById(R.id.main_container), "Starting to update",Snackbar.LENGTH_INDEFINITE).show()
                     }
                 }
             appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
@@ -134,15 +139,6 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
                 Log.d("Pallavi bytes downloaded", "${appUpdateInfo.bytesDownloaded()}")
                 Log.d("Pallavi total bytes to download", "${appUpdateInfo.totalBytesToDownload()}")
                 Log.d("Pallavi availableVersionCode", "${appUpdateInfo.availableVersionCode()}")
-
-                if (hasUpdate) {
-                    triggerFlexibleUpdate(
-                        appUpdateManager,
-                        appUpdateInfo,
-                        activityResultLauncher,
-                        appUpdateOptions
-                    )
-                }
                 Log.d(
                     "Pallavi isUpdateAllowedForFlexible",
                     "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)}"
@@ -155,6 +151,24 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
                 Log.d("Pallavi hasUpdate", "$hasUpdate")
                 Log.d("Pallavi staleness", "${appUpdateInfo.clientVersionStalenessDays()}")
 
+
+                if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) && appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                    Log.d("Pallavi inside is updatetype allowed", "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)}")
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        activityResultLauncher,
+                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                    )
+                } else {
+                    if (hasUpdate) {
+                        triggerFlexibleUpdate(
+                            appUpdateManager,
+                            appUpdateInfo,
+                            activityResultLauncher,
+                            appUpdateOptions
+                        )
+                    }
+                }
             }
                 .addOnFailureListener {
                     Log.d("Pallavi", "failed to update...")
@@ -184,11 +198,14 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
             Log.d("Pallavi installErrorCode", "${state.installErrorCode()}")
 
             if (installStatus == InstallStatus.DOWNLOADED)
-                Toast.makeText(
-                    applicationContext,
-                    "Downloaded with $installStatus",
-                    Toast.LENGTH_LONG
-                ).show()
+            Snackbar.make(findViewById(R.id.main_container), "Downloaded with $installStatus",Snackbar.LENGTH_INDEFINITE)
+                .apply {
+                    setAction("Restart") {
+                        appUpdateManager.completeUpdate()
+                    }
+                }
+                .show()
+
             if (installStatus == InstallStatus.FAILED)
                 Toast.makeText(
                     applicationContext,
