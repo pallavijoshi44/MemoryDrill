@@ -29,6 +29,7 @@ import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallState
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.AppUpdateType.FLEXIBLE
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.memorygame.memorydrill.HelpFragment.HelpFragmentListener
@@ -129,55 +130,37 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
                         ).show()
                     }
                 }
-            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-                val hasUpdate =
-                    appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE || appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-                val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
-                val failed = appUpdateInfo.getFailedUpdatePreconditions(appUpdateOptions)
+            appUpdateInfoTask
+                .addOnSuccessListener { appUpdateInfo ->
+                    val hasUpdate =
+                        appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                                || appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
 
-                Log.d("Pallavi hasUpdate= ", "$hasUpdate")
-                Log.d("Pallavi failed", "${failed.map { it.toString() }}")
-                Log.d("Pallavi bytes downloaded", "${appUpdateInfo.bytesDownloaded()}")
-                Log.d("Pallavi total bytes to download", "${appUpdateInfo.totalBytesToDownload()}")
-                Log.d("Pallavi availableVersionCode", "${appUpdateInfo.availableVersionCode()}")
-                Log.d(
-                    "Pallavi isUpdateAllowedForFlexible",
-                    "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)}"
-                )
-                Log.d(
-                    "Pallavi isUpdateAllowedForImmediate",
-                    "${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)}"
-                )
-                Log.d("Pallavi appUpdateInfo availability", "${appUpdateInfo.updateAvailability()}")
-                Log.d("Pallavi hasUpdate", "$hasUpdate")
-                Log.d("Pallavi staleness", "${appUpdateInfo.clientVersionStalenessDays()}")
+                    val appUpdateOptions =
+                        AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
 
-                if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                    Snackbar.make(
-                        findViewById(R.id.main_container),
-                        "An update is downloaded, do you want to install it? ",
-                        Snackbar.LENGTH_INDEFINITE
-                    ).apply {
+                    if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                        Snackbar.make(
+                            findViewById(R.id.main_container),
+                            "An update is downloaded, do you want to install it? ",
+                            Snackbar.LENGTH_INDEFINITE
+                        ).apply {
                             setAction("Install") {
                                 appUpdateManager.completeUpdate()
                             }
                         }
-                        .show()
-                } else if (hasUpdate) {
+                            .show()
+                    } else if (hasUpdate && appUpdateInfo.isUpdateTypeAllowed(FLEXIBLE)) {
                         triggerFlexibleUpdate(
                             appUpdateManager,
                             appUpdateInfo,
                             activityResultLauncher,
                             appUpdateOptions
                         )
-                }
-            }
-                .addOnFailureListener {
-                    Log.d("Pallavi", "failed to update...")
-
+                    }
                 }
         } catch (e: Exception) {
-            Log.d("Pallavi", "checking for update failed with $e")
+            Log.d("exception = ", "$e")
 
         }
     }
