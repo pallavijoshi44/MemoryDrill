@@ -171,7 +171,6 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
         activityResultLauncher: ActivityResultLauncher<IntentSenderRequest>,
         appUpdateOptions: AppUpdateOptions
     ) {
-        Log.d("Pallavi", "Update availble")
         appUpdateManager.startUpdateFlowForResult(
             appUpdateInfo,
             activityResultLauncher,
@@ -184,9 +183,6 @@ class MainActivity : AppCompatActivity(), SelectLevelFragmentListener, LevelsFra
     private val listener = object : InstallStateUpdatedListener {
         override fun onStateUpdate(state: InstallState) {
             val installStatus = state.installStatus()
-            Log.d("Pallavi installstatus", "$installStatus")
-            Log.d("Pallavi installErrorCode", "${state.installErrorCode()}")
-
             if (installStatus == InstallStatus.DOWNLOADED) {
                 Snackbar.make(
                     findViewById(R.id.main_container),
