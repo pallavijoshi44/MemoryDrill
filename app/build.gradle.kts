@@ -12,8 +12,8 @@ android {
         applicationId = "com.memorygame.memorydrill"
         minSdk = 24
         targetSdk = 36
-        versionCode = 51
-        versionName = "4.3"
+        versionCode = 52
+        versionName = "4.31"
         vectorDrawables {
             useSupportLibrary = true
         }
