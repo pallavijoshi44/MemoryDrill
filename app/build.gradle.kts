@@ -1,18 +1,19 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "com.memorygame.memorydrill"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.memorygame.memorydrill"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 31
-        versionName = "4.2"
+        targetSdk = 36
+        versionCode = 51
+        versionName = "4.3"
         vectorDrawables {
             useSupportLibrary = true
         }
